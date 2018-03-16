@@ -2,6 +2,9 @@
 extern crate arrayref;
 #[macro_use]
 extern crate quick_error;
+extern crate rand;
+
+use rand::Rng;
 
 macro_rules! take(
     ($r:expr, $c:expr) => {{
@@ -25,6 +28,7 @@ pub use error::Error;
 pub trait Gateway {
     fn identify(&mut self) -> Result<parse::SystemInfo, Error>;
     fn set_all(&mut self, bool) -> Result<(), Error>;
+    fn set_rgbw(&mut self, address: &[u8; 8], color: &[u8; 4]) -> Result<(), Error>;
 }
 
 const HELLO_PACKET: [u8; 13] = [
@@ -53,6 +57,16 @@ impl<T> Gateway for T where T: std::io::Read + std::io::Write {
     }
     fn set_all(&mut self, state: bool) -> Result<(), Error> {
         self.write_all(&if state {BROADCAST_PACKET_ON} else {BROADCAST_PACKET_OFF})?;
+        take!(self, 20)?;
+        Ok(())
+    }
+    fn set_rgbw(&mut self, address: &[u8; 8], color: &[u8; 4]) -> Result<(), Error> {
+        let packet = [&[0x14, 0x00, 0x00, 0x36][..],
+        &rand::thread_rng().gen::<[u8; 4]>()[..],
+        &address[..],
+        &color[..],
+        &[0x00, 0x00][..]].concat();
+        self.write_all(&packet)?;
         take!(self, 20)?;
         Ok(())
     }

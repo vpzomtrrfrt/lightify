@@ -19,25 +19,25 @@ fn parse_u16(most: u8, least: u8) -> u16 {
 
 #[derive(Debug)]
 pub struct Light {
-    id: u16,
-    address: [u8; 8],
-    bulb_type: u8,
-    firmware_version: [u8; 4],
-    online: bool,
-    group_id: u8,
-    status: bool,
-    brightness: u8,
-    temperature: u16,
-    r: u8,
-    g: u8,
-    b: u8,
-    w: u8,
-    name: String
+    pub id: u16,
+    pub address: [u8; 8],
+    pub bulb_type: u8,
+    pub firmware_version: [u8; 4],
+    pub online: bool,
+    pub group_id: u8,
+    pub status: bool,
+    pub brightness: u8,
+    pub temperature: u16,
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+    pub w: u8,
+    pub name: String
 }
 
 #[derive(Debug)]
 pub struct SystemInfo {
-    lights: Vec<Light>
+    pub lights: Vec<Light>
 }
 
 pub fn read_discovery_response<R: std::io::Read>(r: &mut R) -> Result<SystemInfo, Error> {
