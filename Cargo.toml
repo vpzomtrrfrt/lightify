@@ -1,0 +1,8 @@
+[package]
+name = "lightify"
+version = "0.1.0"
+authors = ["Colin Reeder <vpzomtrrfrt@gmail.com>"]
+
+[dependencies]
+arrayref = "0.3.4"
+quick-error = "1.2.1"
