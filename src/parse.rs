@@ -7,12 +7,7 @@ struct DiscoveryHeader {
 }
 
 fn read_discovery_header<R: std::io::Read>(r: &mut R) -> Result<DiscoveryHeader, std::io::Error> {
-    let mut buf = [0; 11];
-    let count = r.read(&mut buf)?;
-    if count < 11 {
-        return Err(std::io::Error::new(std::io::ErrorKind::UnexpectedEof,
-                                       "Couldn't read full header"));
-    }
+    let buf = take!(r, 11)?;
     Ok(DiscoveryHeader {
         count: buf[9]
     })
