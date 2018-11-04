@@ -29,6 +29,7 @@ pub trait Gateway {
     fn identify(&mut self) -> Result<parse::SystemInfo, Error>;
     fn set_all(&mut self, bool) -> Result<(), Error>;
     fn set_rgbw(&mut self, address: &[u8; 8], color: &[u8; 4]) -> Result<(), Error>;
+    fn set_brightness(&mut self, address: &[u8; 8], brightness: u8) -> Result<(), Error>;
 }
 
 const HELLO_PACKET: [u8; 13] = [
@@ -65,6 +66,16 @@ impl<T> Gateway for T where T: std::io::Read + std::io::Write {
         &rand::thread_rng().gen::<[u8; 4]>()[..],
         &address[..],
         &color[..],
+        &[0x00, 0x00][..]].concat();
+        self.write_all(&packet)?;
+        take!(self, 20)?;
+        Ok(())
+    }
+    fn set_brightness(&mut self, address: &[u8; 8], brightness: u8) -> Result<(), Error> {
+        let packet = [&[0x11, 0x00, 0x00, 0x31][..],
+        &rand::thread_rng().gen::<[u8; 4]>()[..],
+        &address[..],
+        &[brightness],
         &[0x00, 0x00][..]].concat();
         self.write_all(&packet)?;
         take!(self, 20)?;
